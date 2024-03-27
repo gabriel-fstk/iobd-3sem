@@ -120,6 +120,29 @@ LEFT JOIN conta
 GROUP BY usuario.id, conta.usuario_id
 ORDER BY total_de_contas DESC;
 
+-- Tratando igualdade com view e having (infelizmente utiliza subselect)
+
+CREATE VIEW biggest_qts_accounts_view AS 
+    SELECT count(*) AS total_contas
+    FROM usuario 
+    INNER JOIN conta
+        ON usuario.id = conta.usuario_id
+    GROUP BY usuario.id
+    ORDER BY count(*) desc 
+    LIMIT 1;
+
+SELECT
+    usuario.id, usuario.nome, count(*) AS total_de_contas
+FROM usuario
+LEFT JOIN conta
+    ON usuario.id = conta.usuario_id
+GROUP BY usuario.id
+HAVING count(*) = (
+    SELECT * 
+    FROM biggest_qts_accounts_view
+    )
+ORDER BY usuario.id;
+
 -- 18) Retornar usuário(s) que possue(m) a menor quantidade de contas
 
 SELECT
@@ -138,6 +161,7 @@ WHERE comentario.data_hora > CURRENT_DATE - INTERVAL '7 days';
 
 
 -- 20) Retornar as contas do(s) usuário(s) mais velho(s)
+-- EXTRACT (YEAR FROM ...) // estrair somente idade
 
 SELECT 
     conta.id, conta.nome_usuario, AGE(usuario.data_nascimento) AS data_nascimento
@@ -145,3 +169,60 @@ FROM conta
 LEFT JOIN usuario
     ON conta.usuario_id = usuario.id
 ORDER BY data_nascimento DESC;
+
+-- 21) Listar nos primeiros resultados usuários sem conta acima dos usuários com conta
+
+SELECT
+    usuario.id, usuario.nome, conta.nome_usuario
+FROM usuario 
+LEFT JOIN conta
+    ON usuario.id = conta.usuario_id
+ORDER BY conta.usuario_id DESC;
+
+-- 22) Quantidade total de comentários dado um intervalo de datas
+
+SELECT 
+    COUNT(*) AS total_comentarios
+FROM comentario
+WHERE comentario.data_hora 
+    BETWEEN '2024-02-28' AND '2024-03-20';
+
+-- 23) Selecione publicações que tenham mais de um arquivo (fora o obrigatório)
+
+SELECT 
+    publicacao.id, arquivo.publicacao_id, COUNT(*) AS total_arquivos
+FROM publicacao
+LEFT JOIN arquivo
+    ON publicacao.id = arquivo.publicacao_id
+GROUP BY publicacao.id, arquivo.publicacao_id
+HAVING COUNT(*) > 1;
+
+-- 24) Publicação com maior texto (maior número de caracteres)
+
+SELECT
+    publicacao.id, publicacao.texto
+FROM publicacao
+ORDER BY LENGTH(publicacao.texto) DESC
+LIMIT 1;
+
+
+-- 25) Publicações com maior número de caracteres (nesta questão cuidar a questão do empate, ou seja, 2 ou mais publicações terem o texto com o mesma quantidade de caracteres)
+
+SELECT
+    publicacao.id, publicacao.texto, LENGTH(publicacao.texto) as num_caracteres
+FROM publicacao
+WHERE LENGTH(publicacao.texto) = (
+    SELECT LENGTH(publicacao.texto)
+    FROM publicacao
+    ORDER BY LENGTH(publicacao.texto) DESC
+    LIMIT 1
+);
+
+-- 26) Usuário que mais publicou em um dado intervalo de tempo
+-- skipped until 33
+
+-- 33) Formatar o retorno da data e hora
+
+SELECT
+    usuario.id, usuario.nome, to_char(data_nascimento, 'DD/MM/YYYY')
+FROM usuario;
