@@ -21,6 +21,15 @@ INSERT INTO usuario (nome, email, senha, data_nascimento) VALUES
 INSERT INTO usuario (nome, email, senha, data_nascimento) VALUES 
 ('BRUCE WAYNE', 'brucewayne@waynesa.com', md5('15111995'),'1985-11-01');
 
+INSERT INTO usuario (nome, email, senha, data_nascimento) VALUES 
+('PETER PARKER', 'parker@mail.com', md5('4c582d'),'1997-05-07');
+
+INSERT INTO usuario (nome, email, senha, data_nascimento) VALUES 
+('MJ WATSON', 'mj@mail.com', md5('1cas82d'),'1994-08-15');
+
+INSERT INTO usuario (nome, email, senha, data_nascimento) VALUES 
+('CAMERON DIOR', 'camerondr@dior.com', md5('9Ax182d'),'1999-02-15');
+
 CREATE TABLE conta (
     id serial primary key,
     nome_usuario text unique not null,
@@ -39,6 +48,9 @@ INSERT INTO conta (nome_usuario, usuario_id, data_hora_criacao)
 
 INSERT INTO conta (nome_usuario, usuario_id, data_hora_criacao)
     VALUES ('whoisbatman', 3, now());
+
+    INSERT INTO conta (nome_usuario, usuario_id, data_hora_criacao)
+    VALUES ('mary_watson', 5, now());
 /*
 
     isto eh comentario de bloco
@@ -64,6 +76,10 @@ CREATE TABLE arquivo (
 );
 INSERT INTO arquivo (arquivo, publicacao_id) VALUES
 ('tobias_de_chapeu2.jpeg', 3);
+INSERT INTO arquivo (arquivo, publicacao_id) VALUES
+('timeout.jpeg', 2),
+('gotta.jpeg', 2)
+
 
 CREATE TABLE conta_publicacao (
     publicacao_id integer references publicacao (id),
